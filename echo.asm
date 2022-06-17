@@ -30,11 +30,12 @@ main:
     jmp main
 clearbuffer:
     mov r1, inputbuffer
+    mov r2, 14
     .loop:
-        cmp [r1], 2
-        je .end
         mov [r1], 1
         add r1, 1
+        sub r2, 1
+        jz .end
         jmp .loop
     .end:
         ret
@@ -81,8 +82,8 @@ getinput:
     je .backspace
     cmp r2, 13
     je .enter
-    cmp [r5+r1], 2
-    jz .loop
+    cmp r1, 14
+    je .loop
     mov [r5+r1], r2
     mov r4, 0x1011
     add r4, r1
@@ -106,7 +107,7 @@ getinput:
         mov [r5+r1], 0
         ret
 inputbuffer:
-    dw 1,1,1,1,1,1,1,1,1,1,1,1,1,1,2
+    dw 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
 inputprompt:
     dw ">",0
 outputR1:
