@@ -3,29 +3,31 @@ start:
     mov sp, 0
     mov r10, 0
     mov r11, 0
+    send r10, 0x1010
+    send r10, 0x200F
+    mov r1, inputprompt
+    call outputR1
 main:
     cmp r11, 0
     je .skip
     call clearscreen
     call clearbuffer
     .skip:
-    send r10, 0x1010
-    send r10, 0x200F
-    mov r1, inputprompt
-    call outputR1
     bump r10
     call getinput
     send r10, 0x1020
-    send r10, 0x200F
+    send r10, 0x2007
     mov r1, inputbuffer
     call outputR1
     send r10, 0x1030
     send r10, 0x2009
     mov r1, paktcprompt
     call outputR1
+    bump r10
     .waitforkey:
         wait r3
         js .waitforkey
+    bump r10
     mov r11, 1
     jmp main
 clearbuffer:
@@ -58,14 +60,22 @@ getinput:
     mov r13, 0x7F
     mov r1, 0
     mov r5, inputbuffer
+    mov r12, 2
+    jmp .loop
+.toggle:
+    xor r13, 0x5F
+    mov r12, 2
+    send r10, 0x200F
+    send r10, r13
+    jmp .back
 .loop:
     mov r4, 0x1011
     add r4, r1
+    sub r12, 1
+    jz .toggle
     send r10, r4
-    send r10, 0x200F
-    send r10, r13
     send r10, r4
-    xor r13, 0x5F
+    .back:
     wait r3
     js .loop
     mov r4, 0x1011
